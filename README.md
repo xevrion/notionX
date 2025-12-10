@@ -19,9 +19,9 @@ A friction-zero Chrome extension that lets you save tweets to Notion with a sing
    - Create integration: [notion.so/my-integrations](https://www.notion.so/my-integrations) with **Read content + Insert content**. Token must start with `secret_` or `ntn_`.  
    - Create a database with properties: `Title` (title), `URL` (url), `Author` (text), `Media` (url). `Saved At` (datetime) optional.  
    - Share the database with the integration (••• → Add connections) and copy the database ID (`https://notion.so/workspace/DATABASE_ID?v=...`).
-4) **Configure the extension**  
-   - Click the extension icon → **Open Full Setup** (or open `setup.html`).  
-   - Paste token + database ID → **Connect to Notion** (this validates via `GET /v1/databases/{id}` and saves to `chrome.storage.local`).
+4) **Configure**  
+   - Click the extension icon → **Open Full Setup** (or open `setup.html` directly).  
+   - Paste token + database ID → **Connect to Notion**. The popup no longer accepts credentials; configuration lives in the full-page setup.
 5) **Use it**  
    - Open X/Twitter (feed or tweet detail).  
    - Click the Notion icon next to tweet actions. Toast shows success/error. Missing images are fine.
