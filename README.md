@@ -1,4 +1,4 @@
-# Notion Saver for X
+# NotionX
 
 A friction-zero Chrome extension that lets you save tweets to Notion with a single tap. No modals, no decision fatigue—just flow.
 
