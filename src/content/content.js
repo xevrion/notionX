@@ -1,15 +1,9 @@
-// State management
-let lastInjectedUrl = null;
-let saveButtonExists = false;
-
 // Initialize on page load
 initializeExtension();
 
-// Watch for SPA navigation on X/Twitter
+// Watch for SPA navigation and DOM changes on X/Twitter
 const observer = new MutationObserver(() => {
-  if (isTweetDetailPage() && !saveButtonExists) {
-    injectSaveButton();
-  }
+  injectButtonsForTweets();
 });
 
 observer.observe(document.body, {
@@ -23,59 +17,38 @@ new MutationObserver(() => {
   const currentUrl = location.href;
   if (currentUrl !== lastUrl) {
     lastUrl = currentUrl;
-    saveButtonExists = false;
-    
-    if (isTweetDetailPage()) {
-      setTimeout(() => injectSaveButton(), 500);
-    }
+    injectButtonsForTweets();
   }
 }).observe(document, { subtree: true, childList: true });
 
 function initializeExtension() {
-  if (isTweetDetailPage()) {
-    setTimeout(() => injectSaveButton(), 1000);
-  }
+  setTimeout(() => injectButtonsForTweets(), 500);
 }
 
-function isTweetDetailPage() {
-  // Match URLs like: /username/status/1234567890
-  const tweetUrlPattern = /\/(.*?)\/status\/(\d+)/;
-  return tweetUrlPattern.test(window.location.pathname);
-}
+function injectButtonsForTweets() {
+  const articles = document.querySelectorAll('article[data-testid="tweet"]');
 
-function injectSaveButton() {
-  // Prevent duplicate injections
-  if (saveButtonExists || document.getElementById('notion-save-btn')) {
-    return;
-  }
-  
-  const currentUrl = window.location.href;
-  if (currentUrl === lastInjectedUrl) {
-    return;
-  }
-  
-  // Find the tweet action bar (like/retweet/share buttons)
-  const actionBar = document.querySelector('article[data-testid="tweet"] div[role="group"]');
-  
-  if (!actionBar) {
-    return; // Action bar not loaded yet
-  }
-  
-  // Create the save button
-  const saveButton = createSaveButton();
-  
-  // Insert before the last action (share button)
-  const lastAction = actionBar.lastElementChild;
-  if (lastAction) {
-    actionBar.insertBefore(saveButton, lastAction);
-    saveButtonExists = true;
-    lastInjectedUrl = currentUrl;
-  }
+  articles.forEach(article => {
+    // Skip if already injected
+    if (article.querySelector('.notion-save-wrapper')) {
+      return;
+    }
+
+    const actionBar = article.querySelector('div[role="group"]');
+    if (!actionBar) {
+      return;
+    }
+
+    const saveButton = createSaveButton();
+    const lastAction = actionBar.lastElementChild;
+    if (lastAction) {
+      actionBar.insertBefore(saveButton, lastAction);
+    }
+  });
 }
 
 function createSaveButton() {
   const wrapper = document.createElement('div');
-  wrapper.id = 'notion-save-btn';
   wrapper.className = 'notion-save-wrapper';
   
   const button = document.createElement('button');
@@ -99,6 +72,7 @@ async function handleSaveClick(e) {
   e.stopPropagation();
   
   const button = e.currentTarget;
+  const article = button.closest('article[data-testid="tweet"]');
   
   // Prevent double-clicks
   if (button.classList.contains('saving')) {
@@ -108,7 +82,7 @@ async function handleSaveClick(e) {
   button.classList.add('saving');
   
   try {
-    const tweetData = extractTweetData();
+    const tweetData = extractTweetData(article);
     
     if (!tweetData) {
       showToast('error', 'Could not extract tweet data');
@@ -137,9 +111,8 @@ async function handleSaveClick(e) {
   }
 }
 
-function extractTweetData() {
+function extractTweetData(article) {
   try {
-    const article = document.querySelector('article[data-testid="tweet"]');
     if (!article) return null;
     
     // Extract tweet text
@@ -152,11 +125,12 @@ function extractTweetData() {
     const author = authorEl ? authorEl.getAttribute('href').replace('/', '') : 'Unknown';
     
     // Extract media (first image)
-    const imageEl = article.querySelector('img[alt="Image"]');
+    const imageEl = article.querySelector('div[data-testid="tweetPhoto"] img, img[alt="Image"]');
     const media = imageEl ? imageEl.src : null;
     
-    // Current URL
-    const url = window.location.href;
+    // Find the canonical tweet URL
+    const statusLink = article.querySelector('a[href*="/status/"][role="link"]');
+    const url = statusLink ? new URL(statusLink.getAttribute('href'), window.location.origin).href : window.location.href;
     
     return {
       title: title || 'Untitled Tweet',
