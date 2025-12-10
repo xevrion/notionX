@@ -34,6 +34,12 @@
         "128": "assets/icons/icon128.png"
       }
     },
+    "web_accessible_resources": [
+      {
+        "resources": ["setup.html"],
+        "matches": ["<all_urls>"]
+      }
+    ],
     "icons": {
       "16": "assets/icons/icon16.png",
       "48": "assets/icons/icon48.png",

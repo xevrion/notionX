@@ -2,131 +2,73 @@
 
 A friction-zero Chrome extension that lets you save tweets to Notion with a single tap. No modals, no decision fatigue—just flow.
 
-## Features
+## What it does
+- **Inline capture**: A native-looking save button appears inline with tweet actions on single-tweet pages.
+- **Smart extraction**: Captures tweet title (first 100 chars), author handle, URL, and first image when available.
+- **Fast feedback**: Subtle toast confirms success or shows a retry hint.
+- **SPA-aware**: Re-injects on X/Twitter soft navigations to avoid duplicates.
+- **Privacy-first**: No telemetry; Notion credentials stay in `chrome.storage.local`.
 
-- **One-tap capture**: Save button appears inline with native tweet actions
-- **Zero friction**: No popups, no forms—just click and save
-- **Graceful toast**: Subtle confirmation animation that fades away
-- **Smart extraction**: Captures tweet text, author, URL, and first image
-- **SPA-aware**: Works seamlessly with X's single-page navigation
-- **Privacy-first**: No telemetry, no analytics, credentials stored locally
+## Quick start
+1) Go to `chrome://extensions`, enable **Developer mode**, click **Load unpacked**, and select this folder.  
+2) Open the extension popup and click **Open Full Setup** to launch the setup page (`setup.html`).  
+3) Paste your Notion **Integration Token** and **Database ID**, then connect.  
+4) Open a tweet in its dedicated view; click the bookmark-style button beside the tweet actions; watch for the “Saved to Notion” toast.
 
-## Installation
+## Notion setup (required)
+- Create an integration at [notion.so/my-integrations](https://www.notion.so/my-integrations) with **Read content + Insert content**. Copy the token (`secret_...` or `ntn_...`).
+- Create a database (full page) and ensure these properties exist exactly:
+  - `Title` (title) — default Notion title property name must stay capitalized.
+  - `URL` (url)
+  - `Author` (text)
+  - `Media` (url)
+- Share the database with your integration (••• → Add connections).
+- Copy the database ID from the URL: `https://notion.so/workspace/DATABASE_ID?v=...`
 
-### 1. Load the Extension
-
-1. Open Chrome and navigate to `chrome://extensions/`
-2. Enable **Developer mode** (toggle in top-right)
-3. Click **"Load unpacked"**
-4. Select the `notion-saver-x` folder
-
-### 2. Configure Notion Integration
-
-1. Click the extension icon in Chrome toolbar
-2. Enter your **Notion Integration Token** and **Database ID**
-3. Click **"Save Configuration"**
-
-The extension will verify your credentials and confirm when ready.
-
-## Notion Setup
-
-### Create Integration
-
-1. Visit [notion.so/my-integrations](https://www.notion.so/my-integrations)
-2. Click **"+ New integration"**
-3. Name it: `X Tweet Saver`
-4. Select capabilities: Read content + Insert content
-5. Copy the integration token (starts with `secret_...`)
-
-### Create Inbox Database
-
-1. Create a new full-page database in Notion
-2. Add these properties:
-   - **Title** (default title property)
-   - **URL** (URL type)
-   - **Author** (Text type)
-   - **Media** (URL type)
-   - **Saved At** (Created time type)
-3. Click **"•••"** → **"Add connections"** → Select your integration
-4. Copy the database ID from the URL
-
-**Database ID location:**  
-`https://notion.so/workspace/DATABASE_ID?v=...`
-
-## Usage
-
-1. Open any tweet in its dedicated view (click to expand a tweet)
-2. Look for the bookmark icon next to like/retweet/share
-3. Click once
-4. Toast appears: "Saved to Notion"
-5. Check your inbox database—tweet is archived!
+## Usage notes
+- The button only appears on tweet detail pages (`/username/status/{id}`).
+- If you navigate via SPA, the button re-injects automatically; duplicates are prevented.
+- Missing media is fine—the save will proceed without an image.
 
 ## Troubleshooting
-
-### Button doesn't appear
-- Ensure you're viewing a single tweet (not the feed)
-- Refresh the page
-- Check that the extension is enabled in `chrome://extensions/`
-
-### Save fails with "Not configured"
-- Open extension popup and enter credentials
-- Verify token starts with `secret_`
-- Verify database ID is 32 characters
-
-### Save fails with "Database not found"
-- Ensure database is shared with your integration
-- Go to database → "•••" → "Add connections" → Select integration
-
-### Save fails with "Schema mismatch"
-- Check that your database has all required properties
-- Property names must match exactly: Title, URL, Author, Media
-- Property types must match: Title (title), URL (url), Author (text), Media (url)
+- **Button missing**: Ensure you’re on a single tweet, not the feed; refresh once; verify the extension is enabled.
+- **“Not configured”**: Open the popup/setup page and re-save token + database ID.
+- **“Database not found” (404)**: Share the DB with the integration; confirm the ID is correct.
+- **“Schema mismatch” (400)**: Ensure property names/types match exactly: `Title` (title), `URL` (url), `Author` (text), `Media` (url).
+- **Auth issues (401)**: Token must start with `secret_` or `ntn_`.
 
 ## Architecture
+```
+manifest.json          # Extension config (MV3)
+src/
+  background/          # Notion API handler (service worker)
+  content/             # DOM injection + capture + toast
+  popup/               # Popup UI for quick config
+setup.html/.js         # Full-page guided setup
+assets/icons/          # Extension icons
+```
 
-```
-notion-saver-x/
-├── manifest.json          # Extension configuration
-├── src/
-│   ├── background/
-│   │   └── background.js  # Notion API handler
-│   ├── content/
-│   │   ├── content.js     # DOM injection + capture
-│   │   └── content.css    # X-styled UI
-│   └── popup/
-│       ├── popup.html     # Settings interface
-│       ├── popup.js       # Config logic
-│       └── popup.css      # Settings styling
-└── assets/icons/          # Extension icons
-```
+## Development
+- No build step required; pure MV3 JS/CSS/HTML.
+- Load via `chrome://extensions` → **Load unpacked** pointing to this repo.
+- After changes to background/content scripts, click **Reload** in extensions page.
+- Keep new deps out; prioritize lightweight DOM queries and minimal observers.
 
 ## Privacy
-
-- No data leaves your browser except Notion API calls
-- No telemetry, no tracking, no analytics
-- Credentials stored locally via Chrome's `storage.local`
-- Source code is fully auditable
+- Only calls made are to the Notion API with your provided token.
+- No analytics or telemetry.
+- Credentials are stored locally via `chrome.storage.local`.
 
 ## Roadmap
-
-- [ ] YouTube video capture
-- [ ] Reddit post capture
-- [ ] Custom database field mapping
-- [ ] Keyboard shortcuts
-- [ ] Bulk export
-
-## License
-
-MIT
+- YouTube capture
+- Reddit capture
+- Custom database field mapping
+- Keyboard shortcuts
+- Bulk export
 
 ## Contributing
-
-Pull requests welcome! Please ensure:
-- Code follows existing style
-- No external dependencies added
-- Performance impact remains negligible
+See `CONTRIBUTING.md` for guidelines and how to submit issues/PRs.
 
 ---
 
-**Made with focus and intention.**  
-If this extension saves you time, consider starring the repo or sharing it with others who'd benefit from friction-zero capture.
+**Made with focus and intention.** If this extension saves you time, consider starring or sharing it.  

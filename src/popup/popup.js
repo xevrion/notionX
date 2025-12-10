@@ -13,6 +13,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateConfigStatus(data.notionToken && data.databaseId);
   });
   
+  // Open full-page setup
+  document.getElementById('openSetup').addEventListener('click', () => {
+    chrome.tabs.create({ url: chrome.runtime.getURL('setup.html') });
+  });
+  
   // Handle form submission
   document.getElementById('settingsForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -23,8 +28,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const databaseId = document.getElementById('databaseId').value.trim();
     
     // Validate inputs
-    if (!notionToken.startsWith('secret_')) {
-      showStatus('error', 'Invalid token format. Must start with "secret_"');
+    if (!notionToken.startsWith('secret_') && !notionToken.startsWith('ntn_')) {
+      showStatus('error', 'Invalid token format. Must start with "secret_" or "ntn_"');
       return;
     }
     

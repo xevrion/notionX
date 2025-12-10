@@ -27,7 +27,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           database_id: databaseId
         },
         properties: {
-          title: {
+          // Use Title (capital T) to match the default Notion title property
+          Title: {
             title: [
               {
                 text: {
