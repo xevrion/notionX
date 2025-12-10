@@ -81,11 +81,12 @@ function createSaveButton() {
   const button = document.createElement('button');
   button.className = 'notion-save-button';
   button.setAttribute('aria-label', 'Save to Notion');
-  button.innerHTML = `
-    <svg viewBox="0 0 24 24" class="notion-save-icon">
-      <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/>
-    </svg>
-  `;
+  const icon = document.createElement('img');
+  icon.src = chrome.runtime.getURL('assets/Notion-logo.svg');
+  icon.alt = 'Save to Notion';
+  icon.className = 'notion-save-icon';
+
+  button.appendChild(icon);
   
   button.addEventListener('click', handleSaveClick);
   

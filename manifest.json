@@ -36,7 +36,10 @@
     },
     "web_accessible_resources": [
       {
-        "resources": ["setup.html"],
+      "resources": [
+        "setup.html",
+        "assets/Notion-logo.svg"
+      ],
         "matches": ["<all_urls>"]
       }
     ],

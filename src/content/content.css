@@ -33,12 +33,13 @@
   .notion-save-icon {
     width: 18.75px;
     height: 18.75px;
-    fill: rgb(83, 100, 113);
-    transition: fill 0.2s;
+    display: block;
+    transition: opacity 0.2s, transform 0.2s;
   }
   
   .notion-save-button:hover .notion-save-icon {
-    fill: rgb(29, 155, 240);
+    opacity: 0.9;
+    transform: translateY(-0.5px);
   }
   
   /* Saving state */
