@@ -11,9 +11,16 @@ A friction-zero Chrome extension that lets you save tweets to Notion with a sing
 
 ## Quick start
 1) Go to `chrome://extensions`, enable **Developer mode**, click **Load unpacked**, and select this folder.  
-2) Open the extension popup and click **Open Full Setup** to launch the setup page (`setup.html`).  
-3) Paste your Notion **Integration Token** and **Database ID**, then connect.  
+2) Click the extension icon → **Open Full Setup** (or open `setup.html` directly).  
+3) Paste your Notion **Integration Token** (`secret_` or `ntn_`) and **Database ID**, then click **Connect to Notion** to validate + save.  
 4) Open a tweet in its dedicated view; click the bookmark-style button beside the tweet actions; watch for the “Saved to Notion” toast.
+
+## Configure after “Load unpacked”
+- Open the popup and use **Open Full Setup** (full-page) for easiest validation.  
+- The setup page pings Notion (`GET /v1/databases/{id}`) to verify your token and database before saving to `chrome.storage.local`.  
+- Token must start with `secret_` or `ntn_`.  
+- Database must have properties: `Title` (title), `URL` (url), `Author` (text), `Media` (url); `Saved At` (datetime) is optional but recommended.  
+- Once saved, configuration is reused automatically for all tweets; you can reopen the popup anytime to update values.
 
 ## Notion setup (required)
 - Create an integration at [notion.so/my-integrations](https://www.notion.so/my-integrations) with **Read content + Insert content**. Copy the token (`secret_...` or `ntn_...`).
@@ -22,6 +29,7 @@ A friction-zero Chrome extension that lets you save tweets to Notion with a sing
   - `URL` (url)
   - `Author` (text)
   - `Media` (url)
+  - `Saved At` (datetime)
 - Share the database with your integration (••• → Add connections).
 - Copy the database ID from the URL: `https://notion.so/workspace/DATABASE_ID?v=...`
 
@@ -37,16 +45,6 @@ A friction-zero Chrome extension that lets you save tweets to Notion with a sing
 - **“Schema mismatch” (400)**: Ensure property names/types match exactly: `Title` (title), `URL` (url), `Author` (text), `Media` (url).
 - **Auth issues (401)**: Token must start with `secret_` or `ntn_`.
 
-## Architecture
-```
-manifest.json          # Extension config (MV3)
-src/
-  background/          # Notion API handler (service worker)
-  content/             # DOM injection + capture + toast
-  popup/               # Popup UI for quick config
-setup.html/.js         # Full-page guided setup
-assets/icons/          # Extension icons
-```
 
 ## Development
 - No build step required; pure MV3 JS/CSS/HTML.
