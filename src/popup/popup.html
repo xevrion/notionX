@@ -9,48 +9,14 @@
 <body>
   <div class="container">
     <header>
-      <h1>Notion Saver for X</h1>
+      <h1>NotionX</h1>
       <p class="subtitle">Configure your Notion integration</p>
     </header>
 
-    <form id="settingsForm">
-      <div class="form-group">
-        <label for="notionToken">Notion Integration Token</label>
-        <input 
-          type="password" 
-          id="notionToken" 
-          placeholder="ntn_... or secret_..." 
-          required
-        >
-        <span class="hint">Get this from notion.so/my-integrations</span>
-      </div>
-
-      <div class="form-group">
-        <label for="databaseId">Database ID</label>
-        <input 
-          type="text" 
-          id="databaseId" 
-          placeholder="32-character hex string" 
-          required
-        >
-        <span class="hint">Found in your database URL</span>
-      </div>
-
-      <button type="submit" id="saveBtn" class="btn-primary">
-        Save Configuration
-      </button>
-    </form>
-
-    <div id="status" class="status hidden"></div>
-
-    <footer>
-      <p class="footer-text">
-        <span id="configStatus" class="status-badge">Not configured</span>
-      </p>
-      <button id="openSetup" class="help-link" style="background: none; border: none; cursor: pointer; padding: 0;">
-        Open Full Setup →
-      </button>
-    </footer>
+    <div class="callout">
+      <!-- <p>Configuration now lives in the full-page setup.</p> -->
+      <button id="openSetup" class="btn-primary">Open Full Setup</button>
+    </div>
   </div>
 
   <script src="popup.js"></script>

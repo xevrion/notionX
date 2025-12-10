@@ -3,238 +3,319 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notion Saver Setup</title>
+  <title>NotionX Setup</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    /* VARIABLES */
+    :root {
+      --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: "SF Mono", "Monaco", "Inconsolata", "Fira Mono", "Droid Sans Mono", "Source Code Pro", monospace;
+      --color-black: #111111;
+      --color-white: #ffffff;
+      --color-gray-dark: #333333;
+      --color-gray-light: #f5f5f5;
+      --color-border: #e0e0e0;
+      --color-placeholder: #cccccc;
     }
 
+    /* BASE STYLES */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
+      font-family: var(--font-main);
+      background-color: var(--color-white);
+      color: var(--color-black);
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: center;
-      padding: 20px;
+      align-items: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+      -webkit-font-smoothing: antialiased;
     }
 
     .container {
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      max-width: 600px;
       width: 100%;
-      padding: 48px;
+      max-width: 480px;
+    }
+
+    /* HEADER */
+    header {
+      text-align: center;
+      margin-bottom: 40px;
     }
 
     h1 {
       font-size: 28px;
       font-weight: 700;
-      color: #0f1419;
+      letter-spacing: -0.02em;
       margin-bottom: 8px;
     }
 
     .subtitle {
       font-size: 16px;
-      color: #536471;
-      margin-bottom: 32px;
+      color: var(--color-gray-dark);
+      font-weight: 400;
     }
 
-    .step {
-      margin-bottom: 32px;
-      padding: 24px;
-      background: #f7f9fa;
-      border-radius: 12px;
-      border-left: 4px solid #667eea;
+    /* STEPS SECTION */
+    .steps-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .step-card {
+      border: 1px solid var(--color-border);
+      padding: 20px;
+      border-radius: 4px;
+      transition: box-shadow 0.2s;
+    }
+    
+    .step-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
     }
 
     .step-number {
-      display: inline-block;
-      width: 32px;
-      height: 32px;
-      background: #667eea;
-      color: white;
-      border-radius: 50%;
-      text-align: center;
-      line-height: 32px;
-      font-weight: 700;
-      margin-bottom: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border: 1px solid var(--color-black);
+      color: var(--color-black);
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 2px;
+      margin-right: 12px;
+      flex-shrink: 0;
     }
 
-    .step h3 {
-      font-size: 18px;
-      margin-bottom: 12px;
-      color: #0f1419;
-    }
-
-    .step p {
-      color: #536471;
-      line-height: 1.6;
-      margin-bottom: 12px;
-    }
-
-    .step a {
-      color: #667eea;
-      text-decoration: none;
+    .step-header h3 {
+      font-size: 16px;
       font-weight: 600;
     }
 
-    .step a:hover {
-      text-decoration: underline;
+    .step-content p {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--color-gray-dark);
+      margin-bottom: 8px;
+      padding-left: 32px; /* Align text under the number/title */
     }
 
+    .step-content strong {
+      font-weight: 600;
+      color: var(--color-black);
+    }
+
+    .step-content a {
+      color: var(--color-black);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      font-weight: 500;
+    }
+    
+    /* INPUTS / FORM */
     .form-group {
       margin-bottom: 24px;
+      padding-left: 32px;
+    }
+    
+    /* Overriding step-card padding for form-specific look */
+    .step-card.credentials {
+        padding-bottom: 24px;
     }
 
     label {
       display: block;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 600;
-      color: #0f1419;
-      margin-bottom: 8px;
+      margin-bottom: 16px;
+      padding-left: 0;
     }
 
-    input[type="text"],
-    input[type="password"] {
+    input {
       width: 100%;
-      padding: 14px;
-      font-size: 15px;
-      border: 2px solid #e1e8ed;
-      border-radius: 8px;
-      transition: border-color 0.2s;
-      font-family: 'Monaco', 'Courier New', monospace;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-family: var(--font-mono);
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     input:focus {
       outline: none;
-      border-color: #667eea;
+      border-color: var(--color-black);
+      box-shadow: 0 0 0 1px var(--color-black);
+    }
+
+    input::placeholder {
+      color: var(--color-placeholder);
+    }
+
+    .input-group {
+        margin-bottom: 20px;
     }
 
     .hint {
       display: block;
-      font-size: 13px;
-      color: #536471;
+      font-size: 12px;
+      color: var(--color-gray-dark);
       margin-top: 6px;
+      font-family: var(--font-main);
     }
 
+    /* BUTTON */
     .btn-primary {
-      width: 100%;
+      width: calc(100% - 32px); /* Full width minus the left padding */
+      margin: 16px 16px 0 16px;
       padding: 16px;
       font-size: 16px;
-      font-weight: 700;
-      color: white;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-weight: 600;
+      color: var(--color-white);
+      background-color: var(--color-black);
       border: none;
-      border-radius: 8px;
+      border-radius: 4px;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: opacity 0.2s, transform 0.1s;
     }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-    }
-
-    .btn-primary:active {
-      transform: translateY(0);
-    }
+    
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-primary:active { transform: scale(0.99); }
 
     .btn-primary:disabled {
-      background: #cfd9de;
+      background-color: var(--color-gray-dark);
       cursor: not-allowed;
+      opacity: 0.7;
       transform: none;
     }
 
-    .status {
-      margin-top: 16px;
-      padding: 16px;
-      border-radius: 8px;
-      font-size: 14px;
+    /* FOOTER */
+    .footer-note {
       text-align: center;
-      display: none;
+      margin-top: 32px;
+      font-size: 12px;
+      color: var(--color-gray-dark);
+    }
+    
+    /* Status Styling (Minimal) */
+    .status {
+        margin-top: 24px;
+        font-size: 14px;
+        line-height: 1.5;
+        padding: 16px;
+        border-radius: 4px;
+        text-align: center;
+        display: none;
+        border: 1px solid transparent;
+        margin: 20px 32px 0 32px; /* Same padding as the form elements */
     }
 
-    .status.success {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-      display: block;
+    .status.error { 
+        background: #fffafa; 
+        color: #c90000; 
+        border-color: #ffcccc;
+        display: block;
+    }
+    .status.success { 
+        background: #f0fff4; 
+        color: #1e6c38; 
+        border-color: #c2e9d2;
+        display: block;
     }
 
-    .status.error {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-      display: block;
-    }
-
-    .success-icon {
-      font-size: 48px;
-      margin-bottom: 16px;
-    }
   </style>
 </head>
 <body>
+
   <div class="container">
-    <h1>🚀 Welcome to Notion Saver</h1>
-    <p class="subtitle">Let's connect your Notion workspace in 2 minutes</p>
+    <header>
+      <h1>NotionX</h1>
+      <p class="subtitle">Connect your Notion workspace in 2 minutes</p>
+    </header>
 
-    <div class="step">
-      <div class="step-number">1</div>
-      <h3>Create Notion Integration</h3>
-      <p>
-        Open <a href="https://www.notion.so/my-integrations" target="_blank">notion.so/my-integrations</a> 
-        in a new tab and create an integration named "X Tweet Saver"
-      </p>
-      <p><strong>Capabilities:</strong> ✅ Read content, ✅ Insert content</p>
-    </div>
-
-    <div class="step">
-      <div class="step-number">2</div>
-      <h3>Create Inbox Database</h3>
-      <p>In Notion, create a new database with these properties:</p>
-      <p><strong>Title</strong> (default), <strong>URL</strong> (url), <strong>Author</strong> (text), <strong>Media</strong> (url)</p>
-      <p>Then share it: Click ••• → Add connections → Select your integration</p>
-    </div>
-
-    <div class="step">
-      <div class="step-number">3</div>
-      <h3>Paste Your Credentials</h3>
-      
-      <form id="setupForm">
-        <div class="form-group">
-          <label for="notionToken">Integration Token</label>
-          <input 
-            type="password" 
-            id="notionToken" 
-            placeholder="Starts with ntn_ or secret_"
-            required
-          >
-          <span class="hint">Copy from the integration page</span>
+    <div class="steps-container">
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-number">1</div>
+          <h3>Create Integration</h3>
         </div>
-
-        <div class="form-group">
-          <label for="databaseId">Database ID</label>
-          <input 
-            type="text" 
-            id="databaseId" 
-            placeholder="32-character string from database URL"
-            required
-          >
-          <span class="hint">Found in your database URL after /workspace/</span>
+        <div class="step-content">
+          <p>
+            Open <a href="https://www.notion.so/my-integrations" target="_blank">notion.so/my-integrations</a> 
+            and create an integration named "X Tweet Saver"
+          </p>
+          <p><strong>Capabilities:</strong> Read content, Insert content</p>
         </div>
+      </div>
 
-        <button type="submit" id="saveBtn" class="btn-primary">
-          ✨ Connect to Notion
-        </button>
-      </form>
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-number">2</div>
+          <h3>Create Database</h3>
+        </div>
+        <div class="step-content">
+          <p>
+            Create a database with properties: 
+            <strong>Title</strong> 
+            <span style="font-family: var(--font-mono); font-size:13px; color:var(--color-gray-dark)">(default)</span>, 
+            <strong>URL</strong>, 
+            <strong>Author</strong>, 
+            <strong>Media</strong>
+          </p>
+          <p>Share it: ••• → Add connections → Select integration</p>
+        </div>
+      </div>
 
-      <div id="status" class="status"></div>
+      <div class="step-card credentials">
+        <div class="step-header">
+          <div class="step-number">3</div>
+          <h3>Enter Credentials</h3>
+        </div>
+        
+        <form id="setupForm">
+          <div class="form-group">
+            <label for="notionToken">Integration Token</label>
+            <div class="input-group">
+                <input 
+                    type="password" 
+                    id="notionToken" 
+                    placeholder="ntn_... or secret_..."
+                    required
+                >
+                <span class="hint">Copy from integration page</span>
+            </div>
+            
+            <label for="databaseId">Database ID</label>
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="databaseId" 
+                    placeholder="32-character string"
+                    required
+                >
+                <span class="hint">Found in database URL after /workspace/</span>
+            </div>
+          </div>
+          
+          <button type="submit" id="saveBtn" class="btn-primary">
+            Connect to Notion
+          </button>
+        </form>
+
+        <div id="status" class="status"></div>
+      </div>
     </div>
+    
+    <p class="footer-note">Built for saving tweets to Notion</p>
   </div>
 
   <script src="setup.js"></script>
