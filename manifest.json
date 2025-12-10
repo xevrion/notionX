@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "Notion Saver for X",
+    "name": "NotionX",
     "version": "1.0.0",
-    "description": "One-tap tweet archiving to your Notion inbox. Friction-zero capture.",
+    "description": "One-tap tweet archiving to your Notion inbox.",
     "permissions": [
       "storage",
       "activeTab"
