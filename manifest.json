@@ -1,0 +1,42 @@
+{
+    "manifest_version": 3,
+    "name": "Notion Saver for X",
+    "version": "1.0.0",
+    "description": "One-tap tweet archiving to your Notion inbox. Friction-zero capture.",
+    "permissions": [
+      "storage",
+      "activeTab"
+    ],
+    "host_permissions": [
+      "https://api.notion.com/*",
+      "https://twitter.com/*",
+      "https://x.com/*"
+    ],
+    "background": {
+      "service_worker": "src/background/background.js"
+    },
+    "content_scripts": [
+      {
+        "matches": [
+          "https://twitter.com/*",
+          "https://x.com/*"
+        ],
+        "js": ["src/content/content.js"],
+        "css": ["src/content/content.css"],
+        "run_at": "document_end"
+      }
+    ],
+    "action": {
+      "default_popup": "src/popup/popup.html",
+      "default_icon": {
+        "16": "assets/icons/icon16.png",
+        "48": "assets/icons/icon48.png",
+        "128": "assets/icons/icon128.png"
+      }
+    },
+    "icons": {
+      "16": "assets/icons/icon16.png",
+      "48": "assets/icons/icon48.png",
+      "128": "assets/icons/icon128.png"
+    }
+  }
